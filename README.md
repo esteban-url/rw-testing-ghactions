@@ -142,3 +142,37 @@ Create the migration and migrate your database:
 ```sh
 yarn rw prisma migrate dev --name init
 ```
+
+### 3. Generate the UserExample scaffold
+
+Generate the scaffold for the `UserExample` model:
+
+```sh
+yarn rw g scaffold UserExample
+
+``
+
+This will give you everything you need to create "users" in your app, including some of the tests.
+
+Make sure everything is still working
+
+```sh
+yarn rw test
+```
+
+redwood has generated the basic tests for our services, they interact with your test database.
+
+You should see something like this:
+
+```sh
+ PASS   web  web/src/lib/formatters.test.tsx
+ PASS   api  api/src/services/userExamples/userExamples.test.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       21 passed, 21 total
+Snapshots:   0 total
+Time:        3.587 s
+Ran all test suites related to changed files in 2 projects.
+```
+
+### 3. Setup Github Actions
