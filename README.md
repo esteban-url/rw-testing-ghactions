@@ -234,3 +234,19 @@ jobs:
       # run the web tests
       - run: yarn rw test web --no-watch
 ```
+
+If you push your changes to the `main` branch on Github the CI action will breaks down like this:
+
+![GitHub Logo](readme_images/ci-results-1.png)
+
+1. Set up job
+2. Initializes the containers and creates our postgres instance
+3. Checkout the code
+4. Sets up Node.js
+5. Installs the redwood dependencies
+6. Builds the redwood app
+7. Runs the api tests
+8. Runs the web tests
+9. Cleans up the environment
+
+You can see the details [here](https://github.com/esteban-url/rw-testing-ghactions/actions/runs/3485657682/jobs/5831385280)
