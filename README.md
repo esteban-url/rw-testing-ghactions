@@ -116,7 +116,7 @@ TEST_DATABASE_URL=postgres://postgres:postgres@localhost:54322/postgres
 
 You need one connection string for your development database and one for your test database. you can read more info about it [here](https://redwoodjs.com/docs/testing#the-test-database).
 
-Edit the `scripts/seed.ts` file, uncomment the contents of the array that contain the "fake" users. It should look like this:
+Edit the `scripts/seed.ts` file, uncomment the contents of the array that contain the "fake" users. We will also use the `createMany` method for inserting records in the data base so we can skip the duplicates [more info](<https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#createmany>). It should look like this:
 
 ```ts
     ...
@@ -132,6 +132,21 @@ Edit the `scripts/seed.ts` file, uncomment the contents of the array that contai
     ]
     console.log(
       "\nUsing the default './scripts/seed.{js,ts}' template\nEdit the file to add seed data\n"
+    )
+
+    // Note: if using PostgreSQL, using `createMany` to insert multiple records is much faster
+    // @see: https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#createmany
+    Promise.all(
+      //
+      // Change to match your data model and seeding needs
+      //
+      data.map(async (data: Prisma.UserExampleCreateArgs['data']) => {
+        const record = await db.userExample.createMany({
+          data,
+          skipDuplicates: true,
+        })
+        console.log(record)
+      })
     )
 
     ...
