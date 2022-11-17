@@ -351,3 +351,33 @@ The main chances are:
       # run seed script in the actual db
       - run: yarn rw prisma db seed
   ```
+
+When you push to a PR, you get validation that the tests are passing so you are sure that the code is working as expected.
+
+### 6 Set up the github secrets
+
+Because you are using an actual postgres instance in your Github action, you need to set up the secrets for the database connection, so that the user and password stay confidential.
+
+Go to the "Settings" tab in your Github repo and click on "Secrets" then "Actions", then click on "New repository secret".
+
+In the name field, type `DATABASE_URL`
+
+The value field is the actual secret so it should be something like this: `postgres://[USER_NAME]:[PASSWORD]@[HOST]:[PORT]/postgres`
+
+Now click on `Add secret`.
+
+This will create a new secret that you can use in your Github actions. in this case he connection string for the database where we will deploy the changes.
+
+More info on github secrets [here](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository)
+
+Now you can use the secret in your Github action by using the `${{ secrets.DATABASE_URL }}` syntax.
+
+```yml
+...
+
+env:
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+...
+```
+
+ Now you can merge the PR and the database changes will be deployed to the actual database. ✨

@@ -4,7 +4,7 @@ on:
     branches: ['main']
 
 env:
-  DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
   TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
 
 jobs:
