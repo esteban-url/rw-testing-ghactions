@@ -29,7 +29,10 @@ export default async () => {
       // Change to match your data model and seeding needs
       //
       data.map(async (data: Prisma.UserExampleCreateArgs['data']) => {
-        const record = await db.userExample.create({ data })
+        const record = await db.userExample.createMany({
+          data,
+          skipDuplicates: true,
+        })
         console.log(record)
       })
     )
