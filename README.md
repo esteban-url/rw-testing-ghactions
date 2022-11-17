@@ -72,4 +72,73 @@ Ran all test suites.
 Watch Usage: Press w to show more.
 ```
 
-### 2. Setup Github Actions
+## 2. Modify the prisma schema
+
+For the purpose of this guide we will use the `User` model that comes with the redwood app.
+
+We will also change the db to `postgresql`, since that's what we'll be using in our Github Actions.
+
+> At this point make sure you have a postgres instance ready to use. Here's a handy guide to [set it up locally](https://redwoodjs.com/docs/local-postgres-setup). we will need the connection string so our Redwood app knows where to store the data.
+
+On to the changes, modify your `schema.prisma` file to look like this:
+
+```prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = "native"
+}
+
+// Define your own datamodels here and run `yarn redwood prisma migrate dev`
+// to create migrations for them and apply to your dev DB.
+// TODO: Please remove the following example:
+model UserExample {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+}
+
+
+```
+
+Add your connection strings to your `.env` file:
+
+> Make sure you don't commit this file to your repo, since it contains sensitive information.
+
+```env
+DATABASE_URL=postgres://postgres:postgres@localhost:54322/postgres
+TEST_DATABASE_URL=postgres://postgres:postgres@localhost:54322/postgres
+```
+
+You need one connection string for your development database and one for your test database. you can read more info about it [here](https://redwoodjs.com/docs/testing#the-test-database).
+
+Edit the `scripts/seed.ts` file, uncomment the contents of the array that contain the "fake" users. It should look like this:
+
+```ts
+    ...
+
+    const data: Prisma.UserExampleCreateArgs['data'][] = [
+      // To try this example data with the UserExample model in schema.prisma,
+      // uncomment the lines below and run 'yarn rw prisma migrate dev'
+      //
+      { name: 'alice', email: 'alice@example.com' },
+      { name: 'mark', email: 'mark@example.com' },
+      { name: 'jackie', email: 'jackie@example.com' },
+      { name: 'bob', email: 'bob@example.com' },
+    ]
+    console.log(
+      "\nUsing the default './scripts/seed.{js,ts}' template\nEdit the file to add seed data\n"
+    )
+
+    ...
+```
+
+Create the migration and migrate your database:
+
+```sh
+yarn rw prisma migrate dev --name init
+```
