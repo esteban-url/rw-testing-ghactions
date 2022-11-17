@@ -1,121 +1,75 @@
-# README
+# Testing Redwood in Github actions
 
-Welcome to [RedwoodJS](https://redwoodjs.com)!
+Just want to skip to the code?
 
-> **Prerequisites**
->
-> - Redwood requires [Node.js](https://nodejs.org/en/) (>=14.19.x <=16.x) and [Yarn](https://yarnpkg.com/) (>=1.15)
-> - Are you on Windows? For best results, follow our [Windows development setup](https://redwoodjs.com/docs/how-to/windows-development-setup) guide
+- [Here's the repo](<https://github.com/esteban-url/rw-testing-ghactions>)
+- [Here's the complete guide](#guide)
 
-Start by installing dependencies:
+## Introduction
 
-```
-yarn install
-```
+Having a good testing strategy is important for any project. Redwood has a few different types of tests that you can write to make your app more robust and be able to ship with more confidence. In this guide we'll focus on how to run your Redwood tests in Github Actions, so you can test your app them on every push or pull request.
 
-Then change into that directory and start the development server:
+We will setup a tiny project with very few tests but we include a postgres database thats created and used in every test run on Github. If you need to set up test for an existing project, or want to write better tests, check out the (amazing) [Testing](https://redwoodjs.com/docs/testing) section of the docs.
 
-```
-cd my-redwood-project
-yarn redwood dev
-```
+### Why I wrote this and some acknowledgements
 
-Your browser should automatically open to http://localhost:8910 where you'll see the Welcome Page, which links out to a ton of great resources.
+This guide was inspired and kickstarted by a question raised in the Makers Hour, the person who asked the question went on to fix their issue and posted the solution in the [Redwood Community](<https://community.redwoodjs.com/t/api-tests-fail-in-github-actions-but-pass-locally/4251>).
 
-> **The Redwood CLI**
->
-> Congratulations on running your first Redwood CLI command!
-> From dev to deploy, the CLI is with you the whole way.
-> And there's quite a few commands at your disposal:
-> ```
-> yarn redwood --help
-> ```
-> For all the details, see the [CLI reference](https://redwoodjs.com/docs/cli-commands).
+When they asked that question and very shortly after posted their workaround it got my interest and decided to implement it in my own project. This solved a different problem I was having: I wanted a robot to run all the test on my app, including creating a database just for the tests. Thanks Asher!
 
-## Prisma and the database
+As I got everything working on my app I thought about writing this guide to help others who might be interested in doing the same. The on the Makers Hour I was asked to write it, giving me the final push to do it.
 
-Redwood wouldn't be a full-stack framework without a database. It all starts with the schema. Open the [`schema.prisma`](api/db/schema.prisma) file in `api/db` and replace the `UserExample` model with the following `Post` model:
+The Redwood Makers Hour is a weekly event where we get together to talk about our projects, encourage and help each other out. If you want to join us, you can find us every wednesday on [Discord](<https://discord.com/channels/679514959968993311/824020028835102740>) Thanks fellow Makers!
 
-```
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  body      String
-  createdAt DateTime @default(now())
-}
+I also want to thank the Redwood team for all the hard work they put into this project which makes my life easier, and the community for being so welcoming, helpful and friendly.
+
+### Continuous Integration
+
+Continuous Integration (CI) is the practice of automatically running your tests on every push or pull request. This is a great way to catch bugs before they're merged into your main branch.
+
+### Github Actions
+
+Github Actions is a service that allows you to run a series of commands on a virtual machine. You can use it to run tests, deploy your app, or do anything else you can think of. It's free for public repositories and has a free tier for private repositories.
+
+For more information on Github Actions, check out the [Github Actions docs](https://docs.github.com/en/actions).
+
+## Guide
+
+This is the step by step guide to setup redwood app on your own CI pipeline with Github Actions.
+
+## 1. Create a redwood app
+
+```sh
+yarn create redwood-app rw-testing-ghactions
 ```
 
-Redwood uses [Prisma](https://www.prisma.io/), a next-gen Node.js and TypeScript ORM, to talk to the database. Prisma's schema offers a declarative way of defining your app's data models. And Prisma [Migrate](https://www.prisma.io/migrate) uses that schema to make database migrations hassle-free:
+Go into the app
 
-```
-yarn rw prisma migrate dev
-
-# ...
-
-? Enter a name for the new migration: › create posts
+```sh
+cd rw-testing-ghactions
 ```
 
-> `rw` is short for `redwood`
+Make sure everything is working
 
-You'll be prompted for the name of your migration. `create posts` will do.
-
-Now let's generate everything we need to perform all the CRUD (Create, Retrieve, Update, Delete) actions on our `Post` model:
-
-```
-yarn redwood g scaffold post
-```
-
-Navigate to http://localhost:8910/posts/new, fill in the title and body, and click "Save":
-
-Did we just create a post in the database? Yup! With `yarn rw g scaffold <model>`, Redwood created all the pages, components, and services necessary to perform all CRUD actions on our posts table.
-
-## Frontend first with Storybook
-
-Don't know what your data models look like?
-That's more than ok—Redwood integrates Storybook so that you can work on design without worrying about data.
-Mockup, build, and verify your React components, even in complete isolation from the backend:
-
-```
-yarn rw storybook
-```
-
-Before you start, see if the CLI's `setup ui` command has your favorite styling library:
-
-```
-yarn rw setup ui --help
-```
-
-## Testing with Jest
-
-It'd be hard to scale from side project to startup without a few tests.
-Redwood fully integrates Jest with the front and the backends and makes it easy to keep your whole app covered by generating test files with all your components and services:
-
-```
+```sh
 yarn rw test
 ```
 
-To make the integration even more seamless, Redwood augments Jest with database [scenarios](https://redwoodjs.com/docs/testing.md#scenarios)  and [GraphQL mocking](https://redwoodjs.com/docs/testing.md#mocking-graphql-calls).
+You should see something like this:
 
-## Ship it
+```sh
+...
 
-Redwood is designed for both serverless deploy targets like Netlify and Vercel and serverful deploy targets like Render and AWS:
+ PASS   api  api/src/directives/requireAuth/requireAuth.test.ts
+ PASS   api  api/src/directives/skipAuth/skipAuth.test.ts
 
+Test Suites: 2 passed, 2 total
+Tests:       3 passed, 3 total
+Snapshots:   0 total
+Time:        1.669 s
+Ran all test suites.
+
+Watch Usage: Press w to show more.
 ```
-yarn rw setup deploy --help
-```
 
-Don't go live without auth!
-Lock down your front and backends with Redwood's built-in, database-backed authentication system ([dbAuth](https://redwoodjs.com/docs/authentication#self-hosted-auth-installation-and-setup)), or integrate with nearly a dozen third party auth providers:
-
-```
-yarn rw setup auth --help
-```
-
-## Next Steps
-
-The best way to learn Redwood is by going through the comprehensive [tutorial](https://redwoodjs.com/docs/tutorial/foreword) and joining the community (via the [Discourse forum](https://community.redwoodjs.com) or the [Discord server](https://discord.gg/redwoodjs)).
-
-## Quick Links
-
-- Stay updated: read [Forum announcements](https://community.redwoodjs.com/c/announcements/5), follow us on [Twitter](https://twitter.com/redwoodjs), and subscribe to the [newsletter](https://redwoodjs.com/newsletter)
-- [Learn how to contribute](https://redwoodjs.com/docs/contributing)
+### 2. Setup Github Actions
