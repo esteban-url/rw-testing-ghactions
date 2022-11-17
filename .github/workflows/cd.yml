@@ -1,11 +1,10 @@
-name: Redwood CI for Pull Requests
-
+name: Redwood CD for database deployment
 on:
-  pull_request:
+  push:
     branches: ['main']
 
 env:
-  DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
   TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
 
 jobs:
@@ -49,3 +48,7 @@ jobs:
       - run: yarn rw test api --no-watch
       # run the web tests
       - run: yarn rw test web --no-watch
+      # run migrations on the actual database
+      - run: yarn rw prisma migrate deploy
+      # run seed script in the actual db
+      - run: yarn rw prisma db seed
