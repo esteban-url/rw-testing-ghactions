@@ -237,7 +237,7 @@ jobs:
 
 If you push your changes to the `main` branch on Github the CI action will breaks down like this:
 
-![GitHub Logo](readme_images/ci-results-1.png)
+![CI results](readme_images/ci-results-1.png)
 
 1. Set up job
 2. Initializes the containers and creates our postgres instance
@@ -250,3 +250,31 @@ If you push your changes to the `main` branch on Github the CI action will break
 9. Cleans up the environment
 
 You can see the details [here](https://github.com/esteban-url/rw-testing-ghactions/actions/runs/3485657682/jobs/5831385280)
+
+### 4. Setup CI on a pull request
+
+We want to make sure that the tests are run on every pull request, so we can make sure that the code is working as expected.
+
+Update the `ci.yml` file by removing the `push` event, the first lines should look like this:
+
+```yml
+name: Redwood CI for Pull Requests
+
+on:
+  pull_request:
+    branches: ['main']
+
+...
+```
+
+Now, if you create a pull request, the CI action will run and you will see something like this:
+
+![CI on a PR](readme_images/ci-pr-1.png)
+
+Once the Github action is done, you can see the results in the "Conversation" tab:
+
+![CI passing on a PR](readme_images/ci-pr-2.png)
+
+Check out the actual PR [here](<https://github.com/esteban-url/rw-testing-ghactions/pull/1>)
+
+### 5. Deploy de database chances to an actual database
