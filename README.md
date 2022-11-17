@@ -278,3 +278,76 @@ Once the Github action is done, you can see the results in the "Conversation" ta
 Check out the actual PR [here](<https://github.com/esteban-url/rw-testing-ghactions/pull/1>)
 
 ### 5. Deploy de database chances to an actual database
+
+Now we want to use another action to deploy the database chances to an actual database, so we can test the app in a real environment.
+
+Create a new file in the `.github/workflows` folder called `cd.yml` and add the following content:
+
+```yml
+name: Redwood CD for database deployment
+on:
+  push:
+    branches: ['main']
+
+env:
+  DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+  TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      # install all the dependencies
+      - run: yarn install
+      # build the redwood app
+      - run: yarn rw build
+      # run the api tests
+      - run: yarn rw test api --no-watch
+      # run the web tests
+      - run: yarn rw test web --no-watch
+      # run migrations on the actual database
+      - run: yarn rw prisma migrate deploy
+      # run seed script in the actual db
+      - run: yarn rw prisma db seed
+```
+
+The main chances are:
+
+- We only run the action on push events to the `main` branch
+- We run the migrations and seed scripts after the tests.
+
+  ```yml
+  # run migrations on the actual database
+      - run: yarn rw prisma migrate deploy
+      # run seed script in the actual db
+      - run: yarn rw prisma db seed
+  ```
