@@ -37,7 +37,7 @@ For more information on Github Actions, check out the [Github Actions docs](http
 
 This is the step by step guide to setup redwood app on your own CI pipeline with Github Actions.
 
-## 1. Create a redwood app
+### 1. Create a redwood app
 
 ```sh
 yarn create redwood-app rw-testing-ghactions
@@ -72,7 +72,7 @@ Ran all test suites.
 Watch Usage: Press w to show more.
 ```
 
-## 2. Modify the prisma schema
+### 2. Modify the prisma schema
 
 For the purpose of this guide we will use the `User` model that comes with the redwood app.
 
@@ -165,7 +165,7 @@ Generate the scaffold for the `UserExample` model:
 ```sh
 yarn rw g scaffold UserExample
 
-``
+```
 
 This will give you everything you need to create "users" in your app, including some of the tests.
 
@@ -292,7 +292,7 @@ Once the Github action is done, you can see the results in the "Conversation" ta
 
 Check out the actual PR [here](<https://github.com/esteban-url/rw-testing-ghactions/pull/1>)
 
-### 5. Deploy de database chances to an actual database
+### 5. Deploy the database changes to an actual database
 
 Now we want to use another action to deploy the database chances to an actual database, so we can test the app in a real environment.
 
@@ -369,7 +369,7 @@ The main chances are:
 
 When you push to a PR, you get validation that the tests are passing so you are sure that the code is working as expected.
 
-### 6 Set up the github secrets
+### 6. Set up the github secrets
 
 Because you are using an actual postgres instance in your Github action, you need to set up the secrets for the database connection, so that the user and password stay confidential.
 
