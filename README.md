@@ -3,7 +3,10 @@
 Just want to skip to the code?
 
 - [Here's the repo](<https://github.com/esteban-url/rw-testing-ghactions>)
-- [Here's the complete guide](#guide)
+- TL;DR: add these two files to your repo:
+  - [`.github/workflows/ci.yml`](<https://github.com/esteban-url/rw-testing-ghactions/blob/main/.github/workflows/ci.yml>)
+  - [`.github/workflows/cd.yml`](<https://github.com/esteban-url/rw-testing-ghactions/blob/main/.github/workflows/cd.yml>)
+- [Here's the complete step-by-step guide](#complete-step-by-step-guide)
 
 ## Introduction
 
@@ -33,7 +36,7 @@ Github Actions is a service that allows you to run a series of commands on a vir
 
 For more information on Github Actions, check out the [Github Actions docs](https://docs.github.com/en/actions).
 
-## Guide
+## Complete step-by-step guide
 
 This is the step by step guide to setup redwood app on your own CI pipeline with Github Actions.
 
@@ -355,7 +358,7 @@ jobs:
       - run: yarn rw prisma db seed
 ```
 
-The main chances are:
+The main changes are:
 
 - We only run the action on push events to the `main` branch
 - We run the migrations and seed scripts after the tests.
